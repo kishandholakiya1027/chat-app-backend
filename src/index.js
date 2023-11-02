@@ -1,5 +1,6 @@
 const express = require('express');
 const PORT = 8085;
+require('dotenv').config();
 const cors = require('cors');
 const socket = require('socket.io');
 const chat = require('./models/chat');
