@@ -1,8 +1,6 @@
 # Chat App Backend
 
-A nice project with a nice description
-
----
+This project involves creating a backend server for a real-time chat application using Node.js and Socket.io. Node.js is used for server-side development, while Socket.io provides the real-time communication features. Users can connect to the server and join various chat rooms, where they can exchange text messages in real-time. The backend handles user authentication, message broadcasting, and room management. It ensures that messages are instantly delivered to all participants in the same chat room, creating a seamless and interactive chat experience. This project demonstrates the power of event-driven, real-time applications built with Node.js and Socket.io.
 ## Requirements
 
 For development, you will only need Node.js and a node global package, Yarn, installed in your environement.
@@ -19,10 +17,10 @@ Also, be sure to have `git` available in your PATH, `npm` might need it (You can
 If the installation was successful, you should be able to run the following command.
 
     $ node --version
-    v8.11.3
+    v18.7.0
 
     $ npm --version
-    6.1.0
+    8.15.0
 
 If you need to update `npm`, you can make it using `npm`! Cool right? After running the following command, just open again the command line and be happy.
 
@@ -33,14 +31,6 @@ If you need to update `npm`, you can make it using `npm`! Cool right? After runn
     $ git clone https://github.com/YOUR_USERNAME/PROJECT_TITLE
     $ cd PROJECT_TITLE
     $ npm install
-
-## Configure app
-
-Open `a/nice/path/to/a.file` then edit it with your settings. You will need:
-
-- A setting;
-- Another setting;
-- One more setting;
 
 ## Running the project
 
