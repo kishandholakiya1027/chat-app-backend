@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://man_sakadasariya:VU3K5vVzETsKiXXn@atlascluster.qvdmi6l.mongodb.net/socket');
+mongoose.connect(process.env.DB_URL);
 
 const db = mongoose.connection;
 
