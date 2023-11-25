@@ -53,6 +53,8 @@ module.exports.Login = async (req, res) => {
 
     const token = generateToken(data.id);
 
+    await user.findByIdAndUpdate(data.id, { token: token });
+
     const resData = {
       id: data._id,
       username: data.username,
@@ -61,6 +63,29 @@ module.exports.Login = async (req, res) => {
     }
 
     return res.json({ status: 200, message: "user login successfully", data: resData })
+
+  } catch (error) {
+    res.json({ status: 500, error: error.message })
+  }
+}
+
+module.exports.LogOut = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.json({ status: 400, message: "all field required" })
+    }
+
+    const data = await user.findOne({ token: token });
+
+    if (!data) {
+      return res.json({ status: 400, message: "user not found" })
+    }
+
+    await user.findByIdAndUpdate(data.id, { token: "" });
+
+    return res.json({ status: 200, message: "user logout successfully" })
 
   } catch (error) {
     res.json({ status: 500, error: error.message })

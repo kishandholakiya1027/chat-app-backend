@@ -1,15 +1,14 @@
 const express = require('express');
-const PORT = 8085;
-require('dotenv').config();
-const cors = require('cors');
 const socket = require('socket.io');
-const chat = require('./models/chat');
-const { verifyToken } = require('./utills/jwtAuth');
-const app = express();
+require('dotenv').config();
 require('./config/mongoose');
+const cors = require('cors');
+const app = express();
+const PORT = 8085;
+const corsOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
@@ -20,56 +19,29 @@ app.use('/', require('./routes/index'));
 
 const server = app.listen(PORT, (err) => {
   if (err) {
-    console.log(err);
-    return false;
+    console.error(err);
+    return;
   }
-  console.log("Server is run on port", PORT);
-})
+  console.log("Server is running on port", PORT);
+});
 
 const io = socket(server, {
+  pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
-    credentials: true
+    origin: corsOrigin
   }
 });
 
 io.on('connection', async (socket) => {
   console.log('user connect.');
 
-  socket.on('fetchData', async (data) => {
-    if (data.auth) {
-      const decode = verifyToken(data.auth);
-      const chatData = await chat.find({
-        $or: [
-          { senderId: data.receiverId, receiverId: decode.id },
-          { senderId: decode.id, receiverId: data.receiverId },
-        ]
-      });
-      socket.emit('fetchData2', { data: chatData });
-    }
+  socket.on("new message", (newMessageRecieved) => {
+    var chat = newMessageRecieved;
+    if (!chat) return console.log("chat.users not defined");
+    socket.broadcast.emit("message recieved", newMessageRecieved);
   });
-
-  socket.on('newChat', async (data) => {
-    if (data.data.auth) {
-      const decode = verifyToken(data.data.auth);
-      const cData = {
-        senderId: decode.id,
-        receiverId: data.data.receiverId,
-        message: data.data.message
-      }
-      await chat.create(cData);
-      const chatData = await chat.find({
-        $or: [
-          { senderId: data.data.receiverId, receiverId: decode.id },
-          { senderId: decode.id, receiverId: data.data.receiverId },
-        ]
-      });
-      socket.broadcast.emit('fetchChat', { data: chatData });
-    }
-  })
 
   socket.on('disconnect', async () => {
     console.log('user disconnect.');
   });
-})
+});
